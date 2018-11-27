@@ -58,7 +58,7 @@
                       $(RepositoryRoot)src\Hosting\**\*.*proj;
                       $(RepositoryRoot)src\Http\**\*.*proj;
                       $(RepositoryRoot)src\Html\**\*.*proj;
-                      $(RepositoryRoot)src\Servers\**\*.*proj;
+                      $(RepositoryRoot)src\Servers\**\*.csproj;
                       $(RepositoryRoot)src\Tools\**\*.*proj;
                       $(RepositoryRoot)src\Middleware\**\*.*proj;
                       "
