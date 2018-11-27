@@ -10,6 +10,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\..\..\..\HttpSysServer\shared\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="System.Numerics.Vectors" />
     <Reference Include="System.Buffers" />
     <Reference Include="System.IO.Pipelines" />
@@ -21,7 +25,6 @@
     <Reference Include="Microsoft.AspNetCore.Http" />
     <Reference Include="Microsoft.AspNetCore.Http.Extensions" />
     <Reference Include="Microsoft.AspNetCore.HttpOverrides" />
-    <Reference Include="Microsoft.AspNetCore.HttpSys.Sources" PrivateAssets="All" />
     <Reference Include="Microsoft.Extensions.Logging.Abstractions" />
     <Reference Include="Microsoft.Extensions.Options" />
   </ItemGroup>

@@ -10,9 +10,6 @@
 
   <ItemGroup>
     <Reference Include="Microsoft.AspNetCore.TestHost" />
-    <Reference Include="Microsoft.NET.Test.Sdk" />
-    <Reference Include="xunit.runner.visualstudio" />
-    <Reference Include="xunit" />
   </ItemGroup>
 
 </Project>

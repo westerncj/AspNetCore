@@ -18,9 +18,6 @@
     <Reference Include="Microsoft.Extensions.Logging.Console" />
     <Reference Include="Microsoft.Extensions.Logging.Debug" />
     <Reference Include="Microsoft.Extensions.Logging.Testing" />
-    <Reference Include="Microsoft.NET.Test.Sdk" />
-    <Reference Include="xunit" />
-    <Reference Include="xunit.runner.visualstudio" />
   </ItemGroup>
 
 </Project>

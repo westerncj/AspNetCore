@@ -12,14 +12,14 @@ namespace Microsoft.AspNetCore.Server.IISIntegration.FunctionalTests
     public class Helpers
     {
         public static string GetTestWebSitePath(string name)
-        {   
+        {
             return Path.GetFullPath(
                 Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
                     "..", // tfm
                     "..", // debug
                     "..", // obj
                     "..", // projectfolder
-                    "WebSites",
+                    "testassets",
                     name));
         }
 
