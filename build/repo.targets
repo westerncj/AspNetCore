@@ -19,15 +19,19 @@
     <PrepareDependsOn Condition="'$(_ProjectsOnly)' != 'true'">$(PrepareDependsOn);VerifyPackageArtifactConfig;VerifyExternalDependencyConfig;PrepareOutputPaths</PrepareDependsOn>
     <CleanDependsOn>$(CleanDependsOn);CleanArtifacts;CleanRepoArtifacts</CleanDependsOn>
     <RestoreDependsOn>$(RestoreDependsOn);InstallDotNet;RestoreProjects</RestoreDependsOn>
-    <CompileDependsOn>$(CompileDependsOn);BuildProjects</CompileDependsOn>
+    <CompileDependsOn>$(CompileDependsOn);BuildProjects;PackSharedSources</CompileDependsOn>
     <CompileDependsOn Condition="'$(_ProjectsOnly)' != 'true'">$(CompileDependsOn);PackProjects;BuildRepositories;BuildSharedFx</CompileDependsOn>
     <PackageDependsOn Condition=" '$(_ProjectsOnly)' == 'true'">$(PackageDependsOn);PackProjects</PackageDependsOn>
-    <PackageDependsOn Condition="'$(TestOnly)' != 'true' AND '$(_ProjectsOnly)' != 'true'">$(PackageDependsOn);CheckExpectedPackagesExist</PackageDependsOn>
+    <PackageDependsOn Condition=" '$(_ProjectsOnly)' != 'true'">$(PackageDependsOn);RemoveSharedFrameworkOnlyRefsFromNuspec</PackageDependsOn>
     <PackageDependsOn Condition="'$(TestOnly)' != 'true'">$(PackageDependsOn);CodeSign</PackageDependsOn>
     <TestDependsOn>$(TestDependsOn);TestProjects</TestDependsOn>
     <TestDependsOn Condition="'$(_ProjectsOnly)' != 'true'">$(TestDependsOn);_TestRepositories</TestDependsOn>
     <GetArtifactInfoDependsOn>$(GetArtifactInfoDependsOn);GetProjectArtifactInfo</GetArtifactInfoDependsOn>
+    <GetArtifactInfoDependsOn>$(GetArtifactInfoDependsOn);ResolveSharedSourcesPackageInfo</GetArtifactInfoDependsOn>
     <GetArtifactInfoDependsOn  Condition="'$(_ProjectsOnly)' != 'true'">$(GetArtifactInfoDependsOn);ResolveRepoInfo</GetArtifactInfoDependsOn>
+
+    <!-- Package modification must happen before code signing. -->
+    <CodeSignDependsOn>$(CodeSignDependsOn);RemoveSharedFrameworkOnlyRefsFromNuspec</CodeSignDependsOn>
   </PropertyGroup>
 
   <Target Name="PrepareOutputPaths">
@@ -87,14 +91,14 @@
 
     <MSBuild Projects="@(_RepositoryProject)"
              Targets="GetArtifactInfo"
-             Properties="$(DesignTimeBuildProps);Configuration=$(Configuration);BuildNumber=$(BuildNumber);DesignTimeBuild=true;"
+             Properties="$(DesignTimeBuildProps);Configuration=$(Configuration);VersionSuffix=$(VersionSuffix);BuildNumberSuffix=$(BuildNumberSuffix);DesignTimeBuild=true;"
              BuildInParallel="true">
       <Output TaskParameter="TargetOutputs" ItemName="ArtifactInfo" />
     </MSBuild>
 
     <MSBuild Projects="@(ProjectToBuild)"
              Targets="GetArtifactInfo"
-             Properties="$(DesignTimeBuildProps);Configuration=$(Configuration);BuildNumber=$(BuildNumber);DesignTimeBuild=true"
+             Properties="$(DesignTimeBuildProps);Configuration=$(Configuration);VersionSuffix=$(VersionSuffix);BuildNumberSuffix=$(BuildNumberSuffix);DesignTimeBuild=true"
              SkipNonexistentTargets="true"
              BuildInParallel="true">
       <Output TaskParameter="TargetOutputs" ItemName="ArtifactInfo" />
@@ -102,7 +106,7 @@
 
     <MSBuild Projects="@(_RepositoryProject)"
              Targets="ResolveSolutions"
-             Properties="$(DesignTimeBuildProps);Configuration=$(Configuration);BuildNumber=$(BuildNumber)"
+             Properties="$(DesignTimeBuildProps);Configuration=$(Configuration);VersionSuffix=$(VersionSuffix);BuildNumberSuffix=$(BuildNumberSuffix)"
              ContinueOnError="WarnAndContinue"
              BuildInParallel="true"
              Condition="@(_RepositoryProject->Count()) != 0">
@@ -116,14 +120,14 @@
     -->
     <MSBuild Projects="$(MSBuildProjectFullPath)"
              Targets="GetArtifactInfo"
-             Properties="$(DesignTimeBuildProps);RepositoryRoot=%(ShippedRepository.RootPath);Configuration=$(Configuration);BuildNumber=$(BuildNumber);IsFinalBuild=true;DesignTimeBuild=true"
+             Properties="$(DesignTimeBuildProps);RepositoryRoot=%(ShippedRepository.RootPath);Configuration=$(Configuration);VersionSuffix=$(VersionSuffix);BuildNumberSuffix=$(BuildNumberSuffix);IsFinalBuild=true;DesignTimeBuild=true"
              ContinueOnError="WarnAndContinue"
              Condition="'%(ShippedRepository.Identity)' != ''">
       <Output TaskParameter="TargetOutputs" ItemName="ShippedArtifactInfo" />
     </MSBuild>
     <MSBuild Projects="$(MSBuildProjectFullPath)"
              Targets="ResolveSolutions"
-             Properties="RepositoryRoot=%(ShippedRepository.RootPath);Configuration=$(Configuration);BuildNumber=$(BuildNumber)"
+             Properties="RepositoryRoot=%(ShippedRepository.RootPath);Configuration=$(Configuration);VersionSuffix=$(VersionSuffix);BuildNumberSuffix=$(BuildNumberSuffix)"
              ContinueOnError="WarnAndContinue"
              Condition="'%(ShippedRepository.Identity)' != ''">
       <Output TaskParameter="TargetOutputs" ItemName="_ShippedSolution" />
@@ -282,7 +286,7 @@
     <WriteLinesToFile File="$(RepositoryRoot)artifacts\packages.csv" Lines="PackageId,Version;@(ArtifactInfo->WithMetadataValue('ArtifactType', 'NuGetPackage')->'%(PackageId),%(Version)')" Overwrite="true" />
   </Target>
 
-  <Target Name="ComputeGraph" DependsOnTargets="GetProjectArtifactInfo;GetFxProjectArtifactInfo;ResolveRepoInfo;GeneratePropsFiles">
+  <Target Name="ComputeGraph" DependsOnTargets="ResolveSharedSourcesPackageInfo;GetProjectArtifactInfo;GetFxProjectArtifactInfo;ResolveRepoInfo;GeneratePropsFiles">
     <ItemGroup>
       <_UndeclaredPackageArtifact Include="%(ArtifactInfo.PackageId)" Condition="'%(ArtifactInfo.ArtifactType)' == 'NuGetPackage'" />
       <_UndeclaredPackageArtifact Remove="@(PackageArtifact)" />
@@ -299,27 +303,37 @@
   <Target Name="VerifyPackageArtifactConfig">
     <Error Text="Invalid configuration of %(PackageArtifact.Identity). PackageArtifact must have the 'Category' metadata."
            Condition="'%(PackageArtifact.Category)' == '' " />
+
+    <ItemGroup>
+      <ExternalDependencyInSharedFx Include="@(Dependency)" Exclude="@(PackageArtifact)" />
+      <SharedFrameworkShippingPackage Include="@(SharedFrameworkOnlyPackage)" Exclude="@(SharedFrameworkAndPackage);@(ExternalDependencyInSharedFx);@(PackageArtifact->WithMetadataValue('Category','noship'))" />
+    </ItemGroup>
+
+    <Error Text="Assemblies which ship in the shared framework should not also ship as NuGet packages, unless explicitly allowed. Please update the following to 'noship': %0A - @(SharedFrameworkShippingPackage, '%0A - '). "
+           Condition=" @(SharedFrameworkShippingPackage->Count()) != 0 " />
+  </Target>
+
+  <!-- This is temporary until we can use FrameworkReference to build our own packages. -->
+  <Target Name="RemoveSharedFrameworkOnlyRefsFromNuspec">
+    <ItemGroup>
+      <_BuildOutput Include="$(BuildDir)%(PackageArtifact.Identity).*.nupkg"
+                    Condition=" '%(PackageArtifact.Category)' == 'ship' " />
+
+      <SharedFxPackageRefToHide Include="@(SharedFrameworkOnlyPackage)" Exclude="@(ExternalDependency)" />
+    </ItemGroup>
+
+    <RepoTasks.RemoveSharedFrameworkDependencies Condition="@(_BuildOutput->Count()) != 0"
+      Files="@(_BuildOutput)"
+      FrameworkOnlyPackages="@(SharedFxPackageRefToHide)" />
   </Target>
 
   <Target Name="VerifyExternalDependencyConfig">
-    <RepoTasks.CheckVersionOverrides DotNetPackageVersionPropsPath="$(DotNetPackageVersionPropsPath)"
-      DependenciesFile="$(MSBuildThisFileDirectory)dependencies.props"
-      Condition="'$(DotNetPackageVersionPropsPath)' != ''" />
-
     <Error Text="Missing Version metadata for the following external dependencies: %0A - @(ExternalDependency->WithMetadataValue('Version', ''), '%0A - '). "
            Condition=" @(ExternalDependency->WithMetadataValue('Version', '')->Count()) != 0 " />
   </Target>
 
   <Target Name="FastCheck"
     DependsOnTargets="ComputeGraph;VerifyPackageArtifactConfig;VerifyAllReposHaveNuGetPackageVerifier" />
-
-  <Target Name="CheckExpectedPackagesExist">
-    <ItemGroup>
-      <PackageArtifactFile Include="$(BuildDir)*.nupkg" Exclude="$(BuildDir)*.symbols.nupkg" />
-    </ItemGroup>
-
-    <RepoTasks.CheckExpectedPackagesExist Packages="@(PackageArtifact)" Files="@(PackageArtifactFile)" />
-  </Target>
 
   <Target Name="VerifyAllReposHaveNuGetPackageVerifier" DependsOnTargets="_PrepareRepositories">
     <Error Condition="'%(Repository.Identity)' != '' AND !Exists('%(Repository.RootPath)NuGetPackageVerifier.json')"

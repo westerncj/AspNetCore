@@ -1,5 +1,6 @@
 <Project>
   <Import Project="..\eng\targets\RuntimeIdentifiers.props" />
+  <Import Project="SharedFrameworkOnly.props" />
 
   <PropertyGroup>
     <!-- This repo does not have solutions to build -->
@@ -18,7 +19,14 @@
     <SignCheckExclusionsFile>$(RepositoryRoot)eng\signcheck.exclusions.txt</SignCheckExclusionsFile>
     <!-- This creates false-positives on many of the native .dll's we produce or re-distribute from other teams. -->
     <DisableSignCheckStrongName>true</DisableSignCheckStrongName>
+
+    <SharedSourcesFolder>$(RepositoryRoot)src\Shared\</SharedSourcesFolder>
   </PropertyGroup>
+
+  <ItemGroup>
+    <SharedSourceDirectories Include="$([System.IO.Directory]::GetDirectories($(SharedSourcesFolder)))" />
+    <SharedSourceDirectories Remove="$(RepositoryRoot)src\Shared\Diagnostics\" />
+  </ItemGroup>
 
   <ItemGroup>
     <IntermediateInstaller Include="win-x86" FileExt=".zip" />
@@ -50,7 +58,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <SamplesProject Include="$(RepositoryRoot)src\samples\**\*.csproj;"/>
+    <SamplesProject Include="$(RepositoryRoot)src\**\samples\**\*.csproj;"/>
 
     <ProjectToExclude Include="@(SamplesProject)" Condition="'$(BuildSamples)' == 'false' "/>
 
@@ -63,6 +71,8 @@
     <ProjectToBuild Include="
                       $(RepositoryRoot)src\Features\JsonPatch\**\*.*proj;
                       $(RepositoryRoot)src\DataProtection\**\*.*proj;
+                      $(RepositoryRoot)src\Hosting\**\*.*proj;
+                      $(RepositoryRoot)src\Http\**\*.*proj;
                       $(RepositoryRoot)src\Html\**\*.*proj;
                       $(RepositoryRoot)src\Servers\**\*.*proj;
                       $(RepositoryRoot)src\Tools\**\*.*proj;
@@ -77,9 +87,6 @@
     <PublishToMyGet Condition=" $(PublishType.Contains('myget')) ">true</PublishToMyGet>
     <!-- azure = non-orchestrated builds -->
     <PublishToAzureFeed Condition="$(PublishType.Contains('azure'))">true</PublishToAzureFeed>
-
-    <!-- blob = orchestrated builds -->
-    <PublishToTransportFeed Condition="$(PublishType.Contains('blob'))">true</PublishToTransportFeed>
   </PropertyGroup>
 
   <Import Project="runtimes.props" />

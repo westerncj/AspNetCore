@@ -15,9 +15,6 @@ param(
     [string]$BuildNumber = 't000',
     [switch]$IsFinalBuild,
     [string]$SignType = '',
-    [string]$PackageVersionPropsUrl = $null,
-    [string]$AccessTokenSuffix = $null,
-    [string]$AssetRootUrl = $null,
     [switch]$clean
 )
 
@@ -60,24 +57,6 @@ try {
         $msbuildArgs += '-t:Clean'
     }
 
-    if ($AssetRootUrl) {
-        $msbuildArgs += "-p:DotNetAssetRootUrl=$AssetRootUrl"
-    }
-
-    if ($AccessTokenSuffix) {
-        $msbuildArgs += "-p:DotNetAccessTokenSuffix=$AccessTokenSuffix"
-    }
-
-    if ($PackageVersionPropsUrl) {
-        $IntermediateDir = Join-Path $PSScriptRoot 'obj'
-        $PropsFilePath = Join-Path $IntermediateDir 'external-dependencies.props'
-        New-Item -ItemType Directory $IntermediateDir -ErrorAction Ignore | Out-Null
-        Get-RemoteFile "${PackageVersionPropsUrl}${AccessTokenSuffix}" $PropsFilePath
-        $msbuildArgs += "-p:DotNetPackageVersionPropsPath=$PropsFilePath"
-    }
-
-    $msbuildArgs += '-t:Build'
-
     Invoke-Block { & $msbuild `
             WindowsInstallers.proj `
             -restore `
@@ -88,10 +67,11 @@ try {
             -clp:Summary `
             "-p:SharedFrameworkHarvestRootPath=$repoRoot/obj/sfx/" `
             "-p:Configuration=$Configuration" `
-            "-p:BuildNumber=$BuildNumber" `
+            "-p:BuildNumberSuffix=$BuildNumber" `
             "-p:SignType=$SignType" `
             "-p:IsFinalBuild=$IsFinalBuild" `
             "-bl:$repoRoot/artifacts/logs/installers.msbuild.binlog" `
+            '-t:Build' `
             @msbuildArgs
     }
 }
