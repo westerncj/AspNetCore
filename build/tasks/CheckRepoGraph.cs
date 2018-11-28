@@ -47,7 +47,7 @@ namespace RepoTasks
                 .Where(p => !p.IsSymbolsArtifact)
                 .ToDictionary(p => p.PackageInfo.Id, p => p, StringComparer.OrdinalIgnoreCase);
 
-            var factory = new SolutionInfoFactory(Log, BuildEngine5);
+            var factory = new SolutionInfoFactory(Log, BuildEngine4);
             var props = MSBuildListSplitter.GetNamedProperties(Properties);
 
             if (!props.TryGetValue("Configuration", out var defaultConfig))

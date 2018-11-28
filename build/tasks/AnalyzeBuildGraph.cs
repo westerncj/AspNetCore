@@ -59,7 +59,7 @@ namespace RepoTasks
                 .OfType<ArtifactInfo.Package>()
                 .Where(p => !p.IsSymbolsArtifact);
 
-            var factory = new SolutionInfoFactory(Log, BuildEngine5);
+            var factory = new SolutionInfoFactory(Log, BuildEngine4);
             var props = MSBuildListSplitter.GetNamedProperties(Properties);
 
             Log.LogMessage(MessageImportance.High, $"Beginning cross-repo analysis on {Solutions.Length} solutions. Hang tight...");
