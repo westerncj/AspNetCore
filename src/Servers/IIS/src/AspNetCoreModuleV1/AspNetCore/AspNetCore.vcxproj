@@ -281,4 +281,5 @@
       <Outputs>%(Filename).rc;%(Filename).h;MSG0409.bin</Outputs>
     </CustomBuild>
   </ItemGroup>
+
 </Project>

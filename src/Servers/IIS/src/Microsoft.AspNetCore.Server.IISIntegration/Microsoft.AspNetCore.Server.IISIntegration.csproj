@@ -35,4 +35,15 @@
     <Reference Include="Microsoft.Extensions.Options" />
   </ItemGroup>
 
+  <ItemGroup Condition=" '$(OS)' == 'Windows_NT' ">
+
+    <ArtifactInfo Include="$(BuildDir)Microsoft.AspNetCore.AspNetCoreModuleV1.$(PackageVersion).nupkg">
+      <ArtifactType>NuGetPackage</ArtifactType>
+      <PackageId>Microsoft.AspNetCore.AspNetCoreModuleV1</PackageId>
+      <Version>$(PackageVersion)</Version>
+      <RepositoryRoot>$(RepositoryRoot)</RepositoryRoot>
+    </ArtifactInfo>
+
+  </ItemGroup>
+
 </Project>
