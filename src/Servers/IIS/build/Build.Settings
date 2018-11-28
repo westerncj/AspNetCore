@@ -4,24 +4,22 @@
      <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">$(MSBuildThisFileDirectory)..\</SolutionDir>
      <Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
      <Platform Condition="'$(Platform)' == ''">Win32</Platform>
-     <PlatformToolset Condition=" '$(VisualStudioVersion)' == '12.0'">v120</PlatformToolset>
-     <PlatformToolset Condition=" '$(VisualStudioVersion)' == '14.0'">v140</PlatformToolset>
-     <PlatformToolset Condition=" '$(PlatformToolset)' == ''">v120</PlatformToolset>
+     <PlatformToolset>v141</PlatformToolset>
      <OutputPath Condition="'$(OutputPath)' == ''">$(MSBuildProjectDirectory)\bin\$(Configuration)\$(Platform)\</OutputPath>
      <OutDir>$(OutputPath)</OutDir>
      <AspNetCoreModuleTargetName>aspnetcore</AspNetCoreModuleTargetName>
    </PropertyGroup>
- 
+
    <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
      <UseDebugLibraries>true</UseDebugLibraries>
      <WholeProgramOptimization>false</WholeProgramOptimization>
    </PropertyGroup>
- 
+
    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
      <UseDebugLibraries>false</UseDebugLibraries>
      <WholeProgramOptimization>true</WholeProgramOptimization>
    </PropertyGroup>
- 
+
    <ItemDefinitionGroup>
      <ClCompile>
        <PrecompiledHeader>Use</PrecompiledHeader>
@@ -39,13 +37,13 @@
        <Profile>true</Profile>
      </Link>
    </ItemDefinitionGroup>
- 
+
    <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
      <ClCompile>
        <Optimization>Disabled</Optimization>
      </ClCompile>
    </ItemDefinitionGroup>
- 
+
    <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
      <ClCompile>
        <Optimization>MaxSpeed</Optimization>
@@ -53,19 +51,19 @@
        <IntrinsicFunctions>true</IntrinsicFunctions>
      </ClCompile>
    </ItemDefinitionGroup>
- 
+
    <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
      <ClCompile>
        <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
      </ClCompile>
    </ItemDefinitionGroup>
- 
+
    <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
      <ClCompile>
        <PreprocessorDefinitions>_WIN64;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
      </ClCompile>
    </ItemDefinitionGroup>
- 
+
    <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
      <ClCompile>
        <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -74,7 +72,7 @@
        <GenerateDebugInformation>true</GenerateDebugInformation>
      </Link>
    </ItemDefinitionGroup>
- 
+
    <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
      <ClCompile>
        <PreprocessorDefinitions>_WIN64;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -83,7 +81,7 @@
        <GenerateDebugInformation>true</GenerateDebugInformation>
      </Link>
    </ItemDefinitionGroup>
- 
+
   <PropertyGroup>
     <_TwoDigitYear>$([MSBuild]::Subtract($([System.DateTime]::UtcNow.Year), 2000))</_TwoDigitYear>
     <_ThreeDigitDayOfYear>$([System.DateTime]::UtcNow.DayOfYear.ToString().PadLeft(3, '0'))</_ThreeDigitDayOfYear>

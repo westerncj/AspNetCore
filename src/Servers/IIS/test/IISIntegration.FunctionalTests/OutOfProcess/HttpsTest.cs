@@ -25,9 +25,8 @@ namespace Microsoft.AspNetCore.Server.IISIntegration.FunctionalTests
         {
         }
 
-        [Theory(Skip = "Full framework web.config generation is currently incorrect. See: https://github.com/aspnet/websdk/pull/322")]
+        [Theory]
         [InlineData("V1")]
-        [InlineData("V2")]
         public Task Https_HelloWorld_CLR_X64(string ancmVersion)
         {
             return HttpsHelloWorld(RuntimeFlavor.Clr, ApplicationType.Portable, port: 44396, ancmVersion);
@@ -35,7 +34,6 @@ namespace Microsoft.AspNetCore.Server.IISIntegration.FunctionalTests
 
         [Theory]
         [InlineData("V1")]
-        [InlineData("V2")]
         public Task Https_HelloWorld_CoreCLR_X64_Portable(string ancmVersion)
         {
             return HttpsHelloWorld(RuntimeFlavor.CoreClr, ApplicationType.Portable, port: 44394, ancmVersion);
@@ -101,15 +99,13 @@ namespace Microsoft.AspNetCore.Server.IISIntegration.FunctionalTests
 
         [Theory]
         [InlineData("V1")]
-        [InlineData("V2")]
         public Task Https_HelloWorld_NoClientCert_CoreCLR_X64_Portable(string ancmVersion)
         {
             return HttpsHelloWorldCerts(RuntimeFlavor.CoreClr, ApplicationType.Portable , port: 44397, sendClientCert: false, ancmVersion);
         }
 
-        [Theory(Skip = "Full framework web.config generation is currently incorrect. See https://github.com/aspnet/websdk/pull/322")]
+        [Theory]
         [InlineData("V1")]
-        [InlineData("V2")]
         public Task Https_HelloWorld_NoClientCert_Clr_X64(string ancmVersion)
         {
             return HttpsHelloWorldCerts(RuntimeFlavor.Clr, ApplicationType.Portable, port: 44398, sendClientCert: false, ancmVersion);
@@ -118,7 +114,6 @@ namespace Microsoft.AspNetCore.Server.IISIntegration.FunctionalTests
 #pragma warning disable xUnit1004 // Test methods should not be skipped
         [Theory(Skip = "Manual test only, selecting a client cert is non-determanistic on different machines.")]
         [InlineData("V1")]
-        [InlineData("V2")]
 #pragma warning restore xUnit1004 // Test methods should not be skipped
         public Task Https_HelloWorld_ClientCert_Clr_X64(string ancmVersion)
         {
@@ -128,7 +123,6 @@ namespace Microsoft.AspNetCore.Server.IISIntegration.FunctionalTests
 #pragma warning disable xUnit1004 // Test methods should not be skipped
         [Theory(Skip = "Manual test only, selecting a client cert is non-determanistic on different machines.")]
         [InlineData("V1")]
-        [InlineData("V2")]
 #pragma warning restore xUnit1004 // Test methods should not be skipped
         public Task Https_HelloWorld_ClientCert_CoreCLR_X64_Portable(string ancmVersion)
         {
