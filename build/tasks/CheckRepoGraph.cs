@@ -155,7 +155,7 @@ namespace RepoTasks
                 var repoName = GetDirectoryName(src.Directory);
                 var repo = repos[repoName];
 
-                var policy = Enum.Parse<PatchPolicy>(repo.GetMetadata("PatchPolicy"));
+                var policy = (PatchPolicy)Enum.Parse(typeof(PatchPolicy), repo.GetMetadata("PatchPolicy"));
 
                 if ((policy & PatchPolicy.AlwaysUpdate) != 0 && !src.IsPatching)
                 {

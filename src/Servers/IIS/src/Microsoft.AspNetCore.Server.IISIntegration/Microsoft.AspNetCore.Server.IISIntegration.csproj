@@ -13,6 +13,12 @@
     <Compile Include="..\..\..\..\HttpSysServer\shared\**\*.cs" />
   </ItemGroup>
 
+    <ItemGroup Condition="'$(VCTargetsPath)' != ''">
+    <ProjectReference Include="..\AspNetCoreModuleV1\AspNetCore\AspNetCore.vcxproj" >
+      <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+
   <ItemGroup>
     <Reference Include="System.Numerics.Vectors" />
     <Reference Include="System.Buffers" />

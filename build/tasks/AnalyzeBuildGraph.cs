@@ -75,7 +75,8 @@ namespace RepoTasks
             var policies = new Dictionary<string, PatchPolicy>();
             foreach (var repo in Repositories)
             {
-                policies.Add(repo.ItemSpec, Enum.Parse<PatchPolicy>(repo.GetMetadata("PatchPolicy")));
+                var policy = (PatchPolicy)Enum.Parse(typeof(PatchPolicy), repo.GetMetadata("PatchPolicy"));
+                policies.Add(repo.ItemSpec, policy);
             }
 
             foreach (var solution in solutions)
@@ -273,7 +274,7 @@ namespace RepoTasks
                 }).ToList();
 
             var graph = GraphBuilder.Generate(repositories, StartGraphAt, Log);
-            var repositoriesWithOrder = new List<(ITaskItem repository, int order)>();
+            var repositoriesWithOrder = new List<Tuple<ITaskItem, int>>();
             foreach (var repository in repositories)
             {
                 var graphNodeRepository = graph.FirstOrDefault(g => g.Repository.Name == repository.Name);
@@ -287,12 +288,12 @@ namespace RepoTasks
                 var repositoryTaskItem = new TaskItem(repository.Name);
                 repositoryTaskItem.SetMetadata("Order", order.ToString());
                 repositoryTaskItem.SetMetadata("RootPath", repository.RootDir);
-                repositoriesWithOrder.Add((repositoryTaskItem, order));
+                repositoriesWithOrder.Add(new Tuple<ITaskItem, int>(repositoryTaskItem, order));
             }
 
             return repositoriesWithOrder
-                .OrderBy(r => r.order)
-                .Select(r => r.repository)
+                .OrderBy(r => r.Item2)
+                .Select(r => r.Item1)
                 .ToArray();
         }
     }

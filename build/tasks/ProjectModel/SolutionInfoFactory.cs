@@ -106,6 +106,7 @@ namespace RepoTasks.ProjectModel
 
         private IList<string> GetProjectsForSolutionConfig(string filePath, string configName)
         {
+#if NETCOREAPP2_1
             var sln = SolutionFile.Parse(filePath);
 
             if (string.IsNullOrEmpty(configName))
@@ -129,8 +130,9 @@ namespace RepoTasks.ProjectModel
             {
                 projects.Add(project.AbsolutePath.Replace('\\', '/'));
             }
-
             return projects;
+#endif
+            return null;
         }
     }
 }
