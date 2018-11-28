@@ -41,9 +41,4 @@
     <DotNetPath>$(userprofile)\.dotnet\$(NativePlatform)\dotnet.exe</DotNetPath>
   </PropertyGroup>
 
-  <Target Name="CopyLaunchSettings" AfterTargets="CoreBuild">
-    <!-- This would always override launch settings files in test projects by the default one -->
-    <Copy SourceFiles="$(MSBuildThisFileDirectory)launchSettings.json" DestinationFolder="$(MSBuildProjectDirectory)\Properties" />
-  </Target>
-
 </Project>
