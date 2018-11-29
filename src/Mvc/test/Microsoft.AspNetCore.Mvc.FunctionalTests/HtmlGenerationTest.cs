@@ -138,35 +138,6 @@ namespace Microsoft.AspNetCore.Mvc.FunctionalTests
             }
         }
 
-        [Fact]
-        public async Task HtmlGenerationWebSite_LinkGeneration_With21CompatibilityBehavior()
-        {
-            // Arrange
-            var client = Factory
-                 .WithWebHostBuilder(builder => builder.UseStartup<HtmlGenerationWebSite.StartupWith21CompatibilityBehavior>())
-                 .CreateDefaultClient();
-            var expectedMediaType = MediaTypeHeaderValue.Parse("text/html; charset=utf-8");
-            var outputFile = "compiler/resources/HtmlGenerationWebSite.HtmlGeneration_Home.Index21Compat.html";
-            var expectedContent =
-                await ResourceFile.ReadResourceAsync(_resourcesAssembly, outputFile, sourceFile: false);
-
-            // Act
-            // The host is not important as everything runs in memory and tests are isolated from each other.
-            var response = await client.GetAsync("http://localhost/HtmlGeneration_Home/");
-            var responseContent = await response.Content.ReadAsStringAsync();
-
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(expectedMediaType, response.Content.Headers.ContentType);
-
-            responseContent = responseContent.Trim();
-#if GENERATE_BASELINES
-            ResourceFile.UpdateFile(_resourcesAssembly, outputFile, expectedContent, responseContent);
-#else
-            Assert.Equal(expectedContent.Trim(), responseContent, ignoreLineEndingDifferences: true);
-#endif
-        }
-
         public static TheoryData<string, string> EncodedPagesData
         {
             get
@@ -508,8 +479,10 @@ Products: Book1, Book2 (1)";
             // Act - 3
             // Trigger an expiration of the nested content.
             var content = @"[{ productName: ""Music Systems"" },{ productName: ""Televisions"" }]";
-            var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/categories/Electronics");
-            requestMessage.Content = new StringContent(content, Encoding.UTF8, "application/json");
+            var requestMessage = new HttpRequestMessage(HttpMethod.Post, "/categories/Electronics")
+            {
+                Content = new StringContent(content, Encoding.UTF8, "application/json"),
+            };
             (await Client.SendAsync(requestMessage)).EnsureSuccessStatusCode();
 
             var response3 = await Client.GetStringAsync("/categories/Electronics?correlationId=3");
@@ -677,11 +650,13 @@ Products: Music Systems, Televisions (3)";
         public async Task ValidationProviderAttribute_ValidationTagHelpers_GeneratesExpectedSpansAndDivsOnValidationError()
         {
             // Arrange
-            var request = new HttpRequestMessage(HttpMethod.Post, "HtmlGeneration_Home/ValidationProviderAttribute");
-            request.Content = new FormUrlEncodedContent(new Dictionary<string, string>
+            var request = new HttpRequestMessage(HttpMethod.Post, "HtmlGeneration_Home/ValidationProviderAttribute")
             {
-                { "FirstName", "TestFirstName" },
-            });
+                Content = new FormUrlEncodedContent(new Dictionary<string, string>
+                {
+                    { "FirstName", "TestFirstName" },
+                }),
+            };
 
             // Act
             var response = await Client.SendAsync(request);

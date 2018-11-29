@@ -18,6 +18,6 @@ namespace Microsoft.AspNetCore.Mvc.Infrastructure
         /// <summary>
         /// Gets or sets the application's configured <see cref="Mvc.CompatibilityVersion"/>.
         /// </summary>
-        public CompatibilityVersion CompatibilityVersion { get; set; } = CompatibilityVersion.Version_2_0;
+        public CompatibilityVersion CompatibilityVersion { get; set; } = CompatibilityVersion.Version_3_0;
     }
 }
