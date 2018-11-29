@@ -1,27 +1,9 @@
 <Project>
 
   <PropertyGroup>
-    <CompileDependsOn Condition="'$(OS)'=='Windows_NT'">BuildNativeAssets;$(CompileDependsOn)</CompileDependsOn>
     <PackageDependsOn Condition="'$(OS)'=='Windows_NT'">$(PackageDependsOn);PackageNativeProjects</PackageDependsOn>
     <NuGetVerifierRuleFile Condition="'$(OS)' != 'Windows_NT'">$(RepositoryRoot)NuGetPackageVerifier.xplat.json</NuGetVerifierRuleFile>
   </PropertyGroup>
-
-  <Target Name="BuildNativeAssets" DependsOnTargets="Prepare;GetToolsets" >
-    <PropertyGroup>
-      <BuildArgs>-p:Configuration=$(Configuration) -v:m -nologo -clp:NoSummary -p:CommitHash=$(CommitHash)</BuildArgs>
-    </PropertyGroup>
-
-    <ItemGroup>
-      <Platforms Include="Win32;x64" />
-    </ItemGroup>
-
-    <Error
-      Text="Could not find an installation of Visual Studio with the C++ development tools."
-      Condition="'$(VisualStudioMSBuildx86Path)' == ''" />
-
-    <Exec Command="&quot;$(VisualStudioMSBuildx86Path)&quot; &quot;$(RepositoryRoot)src\AspNetCoreModuleV1\AspNetCore\AspNetCore.vcxproj&quot; $(BuildArgs) -p:Platform=%(Platforms.Identity) -bl:$(LogOutputDir)native.%(Platforms.Identity).binlog"
-      Condition="'$(VisualStudioMSBuildx86Path)' != ''" />
-  </Target>
 
   <ItemGroup Condition=" '$(OS)' == 'Windows_NT' ">
 
@@ -34,12 +16,8 @@
 
   </ItemGroup>
 
-  <Target Name="PackageNativeProjects">
-    <PackNuspec NuspecPath="$(MSBuildThisFileDirectory)..\nuget\AspNetCoreV1.nuspec"
-      DestinationFolder="$(BuildDir)"
-      Properties="version=$(PackageVersion);Configuration=$(Configuration)"
-      Overwrite="true"
-      BasePath="$(RepositoryRoot)" />
+  <Target Name="PackageNativeProjects" Condition=" '$(OS)' == 'Windows_NT' ">
+    <PackNuspec NuspecPath="$(MSBuildThisFileDirectory)..\nuget\AspNetCoreV1.nuspec" DestinationFolder="$(BuildDir)" Properties="version=$(PackageVersion);Configuration=$(Configuration)" Overwrite="true" BasePath="$(RepositoryRoot)" />
 
     <ItemGroup>
       <!-- x64 -->

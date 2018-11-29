@@ -51,8 +51,6 @@
                        $(RepositoryRoot)src\Middleware\WebSockets\samples\**\*.csproj;
                        $(RepositoryRoot)src\Tools\dotnet-watch\test\TestProjects\**\*.csproj;
                        " />
-    <NativeProjects Include="$(RepositoryRoot)src\Servers\**\*.vcxproj" AdditionalProperties="Platform=x64"/>
-    <NativeProjects Include="$(RepositoryRoot)src\Servers\**\*.vcxproj" AdditionalProperties="Platform=x86"/>
     <ProjectToBuild Include="@(NativeProjects)" Condition="'$(OS)' == 'Windows_NT'"/>
     <ProjectToBuild Include="
                       $(RepositoryRoot)src\Features\JsonPatch\**\*.*proj;

@@ -1,5 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <!-- <Import Project="..\..\build\repo.targets" /> -->
   <PropertyGroup>
     <Description>ASP.NET Core components for working with the IIS AspNetCoreModule.</Description>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -13,8 +14,11 @@
     <Compile Include="..\..\..\..\HttpSysServer\shared\**\*.cs" />
   </ItemGroup>
 
-    <ItemGroup Condition="'$(VCTargetsPath)' != ''">
-    <ProjectReference Include="..\AspNetCoreModuleV1\AspNetCore\AspNetCore.vcxproj" >
+  <ItemGroup Condition="'$(VCTargetsPath)' != ''">
+    <ProjectReference Include="..\AspNetCoreModuleV1\AspNetCore\AspNetCore.vcxproj" SetPlatform="Platform=x64">
+      <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\AspNetCoreModuleV1\AspNetCore\AspNetCore.vcxproj" SetPlatform="Platform=x86">
       <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>
@@ -33,17 +37,6 @@
     <Reference Include="Microsoft.AspNetCore.HttpOverrides" />
     <Reference Include="Microsoft.Extensions.Logging.Abstractions" />
     <Reference Include="Microsoft.Extensions.Options" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(OS)' == 'Windows_NT' ">
-
-    <ArtifactInfo Include="$(BuildDir)Microsoft.AspNetCore.AspNetCoreModuleV1.$(PackageVersion).nupkg">
-      <ArtifactType>NuGetPackage</ArtifactType>
-      <PackageId>Microsoft.AspNetCore.AspNetCoreModuleV1</PackageId>
-      <Version>$(PackageVersion)</Version>
-      <RepositoryRoot>$(RepositoryRoot)</RepositoryRoot>
-    </ArtifactInfo>
-
   </ItemGroup>
 
 </Project>
