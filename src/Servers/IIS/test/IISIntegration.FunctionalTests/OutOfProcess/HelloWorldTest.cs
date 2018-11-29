@@ -29,7 +29,6 @@ namespace Microsoft.AspNetCore.Server.IISIntegration.FunctionalTests
 
         [Theory]
         [InlineData("V1")]
-        [InlineData("V2")]
         public Task HelloWorld_IISExpress_CoreClr_X64_Portable(string ancmVersion)
         {
             return HelloWorld(RuntimeFlavor.CoreClr, ApplicationType.Portable, ancmVersion);
@@ -49,7 +48,7 @@ namespace Microsoft.AspNetCore.Server.IISIntegration.FunctionalTests
                     EnvironmentName = "HelloWorld", // Will pick the Start class named 'StartupHelloWorld',
                     ServerConfigTemplateContent = (serverType == ServerType.IISExpress) ? File.ReadAllText("AppHostConfig/Http.config") : null,
                     SiteName = "HttpTestSite", // This is configured in the Http.config
-                    TargetFramework = runtimeFlavor == RuntimeFlavor.Clr ? "net461" : "netcoreapp2.0",
+                    TargetFramework = runtimeFlavor == RuntimeFlavor.Clr ? "net461" : "netcoreapp2.1",
                     ApplicationType = applicationType,
                     Configuration =
 #if DEBUG
