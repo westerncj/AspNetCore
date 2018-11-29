@@ -131,8 +131,9 @@ namespace RepoTasks.ProjectModel
                 projects.Add(project.AbsolutePath.Replace('\\', '/'));
             }
             return projects;
-#endif
+#else
             return null;
+#endif
         }
     }
 }
