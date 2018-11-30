@@ -24,7 +24,7 @@ namespace Microsoft.AspNetCore.Mvc
     ///
     ///     public void ConfigureServices(IServiceCollection services)
     ///     {
-    ///         services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+    ///         services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
     ///     }
     ///
     ///     ...
