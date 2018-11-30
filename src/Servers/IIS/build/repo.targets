@@ -5,31 +5,4 @@
     <NuGetVerifierRuleFile Condition="'$(OS)' != 'Windows_NT'">$(RepositoryRoot)NuGetPackageVerifier.xplat.json</NuGetVerifierRuleFile>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(OS)' == 'Windows_NT' ">
-
-    <ArtifactInfo Include="$(BuildDir)Microsoft.AspNetCore.AspNetCoreModuleV1.$(PackageVersion).nupkg">
-      <ArtifactType>NuGetPackage</ArtifactType>
-      <PackageId>Microsoft.AspNetCore.AspNetCoreModuleV1</PackageId>
-      <Version>$(PackageVersion)</Version>
-      <RepositoryRoot>$(RepositoryRoot)</RepositoryRoot>
-    </ArtifactInfo>
-
-  </ItemGroup>
-
-  <Target Name="PackageNativeProjects" Condition=" '$(OS)' == 'Windows_NT' ">
-    <PackNuspec NuspecPath="$(MSBuildThisFileDirectory)..\nuget\AspNetCoreV1.nuspec" DestinationFolder="$(BuildDir)" Properties="version=$(PackageVersion);Configuration=$(Configuration)" Overwrite="true" BasePath="$(RepositoryRoot)" />
-
-    <ItemGroup>
-      <!-- x64 -->
-      <AncmFiles Include="$(RepositoryRoot)src\AspNetCoreModuleV1\AspNetCore\bin\$(Configuration)\x64\aspnetcore.dll" Link="AspNetCoreModuleV1\x64\aspnetcore.dll" />
-      <AncmFiles Include="$(RepositoryRoot)src\AspNetCoreModuleV1\AspNetCore\bin\$(Configuration)\x64\aspnetcore.pdb" Link="AspNetCoreModuleV1\x64\aspnetcore.pdb" />
-      <!-- x86 -->
-      <AncmFiles Include="$(RepositoryRoot)src\AspNetCoreModuleV1\AspNetCore\bin\$(Configuration)\Win32\aspnetcore.dll" Link="AspNetCoreModuleV1\x86\aspnetcore.dll" />
-      <AncmFiles Include="$(RepositoryRoot)src\AspNetCoreModuleV1\AspNetCore\bin\$(Configuration)\Win32\aspnetcore.pdb" Link="AspNetCoreModuleV1\x86\aspnetcore.pdb" />
-      <!-- Schema-->
-      <AncmFiles Include="$(RepositoryRoot)src\AspNetCoreModuleV1\AspNetCore\bin\$(Configuration)\x64\aspnetcore_schema.xml" Link="AspNetCoreModuleV1\aspnetcore_schema.xml" />
-    </ItemGroup>
-
-  </Target>
-
 </Project>
