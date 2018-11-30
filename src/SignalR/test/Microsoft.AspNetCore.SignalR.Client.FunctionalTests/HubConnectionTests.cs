@@ -836,6 +836,31 @@ namespace Microsoft.AspNetCore.SignalR.Client.FunctionalTests
             }
         }
 
+        [Fact]
+        public async Task RandomGenericIsNotTreatedAsStream()
+        {
+            bool ExpectedErrors(WriteContext writeContext)
+            {
+                return "Microsoft.AspNetCore.SignalR.Internal.DefaultHubDispatcher" == writeContext.LoggerName &&
+                    "FailedInvokingHubMethod" == writeContext.EventId.Name;
+            }
+            var hubPath = HubPaths[0];
+            var hubProtocol = HubProtocols.First().Value;
+            var transportType = TransportTypes().First().Cast<HttpTransportType>().First();
+
+            using (StartServer<Startup>(out var server, ExpectedErrors))
+            {
+                var connection = CreateHubConnection(server.Url, hubPath, transportType, hubProtocol, LoggerFactory);
+                await connection.StartAsync().OrTimeout();
+                // List<T> will be looked at to replace with a StreamPlaceholder and should be skipped, so an error will be thrown from the
+                // protocol on the server when it tries to match List<T> with a StreamPlaceholder
+                var hubException = await Assert.ThrowsAsync<HubException>(() => connection.InvokeAsync<int>("StreamEcho", new List<string> { "1", "2" }).OrTimeout());
+                Assert.Equal("Failed to invoke 'StreamEcho' due to an error on the server. InvalidDataException: Error binding arguments. Make sure that the types of the provided values match the types of the hub method being invoked.",
+                    hubException.Message);
+                await connection.DisposeAsync().OrTimeout();
+            }
+        }
+
         [Theory]
         [MemberData(nameof(TransportTypes))]
         public async Task ClientCanUseJwtBearerTokenForAuthentication(HttpTransportType transportType)

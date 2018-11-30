@@ -146,7 +146,7 @@ namespace Microsoft.AspNetCore.SignalR.Internal
         private Task ProcessStreamBindingFailure(HubConnectionContext connection, StreamBindingFailureMessage bindingFailureMessage)
         {
             var errorString = ErrorMessageHelper.BuildErrorMessage(
-                $"Failed to bind Stream Item arguments to proper type.",
+                "Failed to bind Stream message.",
                 bindingFailureMessage.BindingFailure.SourceException, _enableDetailedErrors);
 
             var message = new StreamCompleteMessage(bindingFailureMessage.Id, errorString);
@@ -290,12 +290,13 @@ namespace Microsoft.AspNetCore.SignalR.Internal
                         // Invoke Async, one reponse expected
                         async Task ExecuteInvocation()
                         {
-                            Object result;
+                            object result;
                             try
                             {
                                 result = await ExecuteHubMethod(methodExecutor, hub, arguments);
                                 Log.SendingResult(_logger, hubMethodInvocationMessage.InvocationId, methodExecutor);
-                            } catch (Exception ex)
+                            }
+                            catch (Exception ex)
                             {
                                 await SendInvocationError(hubMethodInvocationMessage.InvocationId, connection,
                                     ErrorMessageHelper.BuildErrorMessage($"An unexpected error occurred invoking '{hubMethodInvocationMessage.Target}' on the server.", ex, _enableDetailedErrors));
