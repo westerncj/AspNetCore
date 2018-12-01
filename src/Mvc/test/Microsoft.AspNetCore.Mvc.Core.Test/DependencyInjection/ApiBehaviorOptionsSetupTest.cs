@@ -6,6 +6,8 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -16,7 +18,9 @@ namespace Microsoft.Extensions.DependencyInjection
         public void Configure_AssignsInvalidModelStateResponseFactory()
         {
             // Arrange
-            var optionsSetup = new ApiBehaviorOptionsSetup();
+            var optionsSetup = new ApiBehaviorOptionsSetup(
+                NullLoggerFactory.Instance,
+                Options.Options.Create(new MvcCompatibilityOptions()));
             var options = new ApiBehaviorOptions();
 
             // Act
@@ -31,7 +35,9 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             // Arrange
             var expected = new[] { 400, 401, 403, 404, 406, 409, 415, 422, };
-            var optionsSetup = new ApiBehaviorOptionsSetup();
+            var optionsSetup = new ApiBehaviorOptionsSetup(
+                NullLoggerFactory.Instance,
+                Options.Options.Create(new MvcCompatibilityOptions()));
             var options = new ApiBehaviorOptions();
 
             // Act
@@ -45,7 +51,9 @@ namespace Microsoft.Extensions.DependencyInjection
         public void PostConfigure_SetProblemDetailsModelStateResponseFactory()
         {
             // Arrange
-            var optionsSetup = new ApiBehaviorOptionsSetup();
+            var optionsSetup = new ApiBehaviorOptionsSetup(
+                NullLoggerFactory.Instance,
+                Options.Options.Create(new MvcCompatibilityOptions { CompatibilityVersion = CompatibilityVersion.Latest }));
             var options = new ApiBehaviorOptions();
 
             // Act
@@ -60,7 +68,9 @@ namespace Microsoft.Extensions.DependencyInjection
         public void PostConfigure_DoesNotSetProblemDetailsFactory_IfValueWasModified()
         {
             // Arrange
-            var optionsSetup = new ApiBehaviorOptionsSetup();
+            var optionsSetup = new ApiBehaviorOptionsSetup(
+                NullLoggerFactory.Instance,
+                Options.Options.Create(new MvcCompatibilityOptions { CompatibilityVersion = CompatibilityVersion.Latest }));
             var options = new ApiBehaviorOptions();
             Func<ActionContext, IActionResult> expected = _ => null;
 

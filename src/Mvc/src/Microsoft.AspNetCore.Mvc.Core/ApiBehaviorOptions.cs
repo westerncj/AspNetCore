@@ -77,7 +77,10 @@ namespace Microsoft.AspNetCore.Mvc
         /// Gets or sets a value that determines if controllers with <see cref="ApiControllerAttribute"/>
         /// transform certain client errors.
         /// <para>
-        /// When <c>false</c>, a result filter is added to API controller actions that transforms <see cref="IClientErrorActionResult"/>.
+        /// When <see langword="false"/>, a result filter is added to API controller actions that transforms
+        /// <see cref="IClientErrorActionResult"/>. Otherwise, the filter is suppressed.
+        /// </para>
+        /// <para>
         /// By default, <see cref="ClientErrorMapping"/> is used to map <see cref="IClientErrorActionResult"/> to a
         /// <see cref="ProblemDetails"/> instance (returned as the value for <see cref="ObjectResult"/>).
         /// </para>
@@ -87,7 +90,7 @@ namespace Microsoft.AspNetCore.Mvc
         /// </para>
         /// </summary>
         /// <value>
-        /// The default value is <see langword="true"/>.
+        /// The default value is <see langword="false"/>.
         /// </value>
         public bool SuppressMapClientErrors
         {
@@ -106,7 +109,7 @@ namespace Microsoft.AspNetCore.Mvc
         /// </para>
         /// </summary>
         /// <value>
-        /// The default value is <see langword="true"/>.
+        /// The default value is <see langword="false"/>.
         /// </value>
         public bool SuppressUseValidationProblemDetailsForInvalidModelStateResponses
         {
