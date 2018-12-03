@@ -66,24 +66,6 @@ namespace SignalRSamples.Hubs
             }
         }
 
-        public async Task UploadFile(string filepath, ChannelReader<byte[]> source)
-        {
-            var result = Enumerable.Empty<byte>();
-            var chunk = 1;
-
-            while (await source.WaitToReadAsync())
-            {
-                while (source.TryRead(out var item))
-                {
-                    Debug.WriteLine($"received chunk #{chunk++}");
-                    result = result.Concat(item);  // atrocious
-                    await Task.Delay(50);
-                }
-            }
-
-            File.WriteAllBytes(filepath, result.ToArray());
-        }
-
         public ChannelReader<string> StreamEcho(ChannelReader<string> source)
         {
             var output = Channel.CreateUnbounded<string>();
