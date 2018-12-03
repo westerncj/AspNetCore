@@ -20,4 +20,4 @@ export { HttpTransportType, TransferFormat, ITransport } from "./ITransport";
 export { IStreamSubscriber, IStreamResult, ISubscription } from "./Stream";
 export { NullLogger } from "./Loggers";
 export { JsonHubProtocol } from "./JsonHubProtocol";
-export { Subject } from "./Utils";
+export { Subject } from "./Subject";

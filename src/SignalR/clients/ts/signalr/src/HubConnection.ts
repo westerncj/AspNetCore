@@ -6,7 +6,8 @@ import { IConnection } from "./IConnection";
 import { CancelInvocationMessage, CompletionMessage, IHubProtocol, InvocationMessage, MessageType, StreamCompleteMessage, StreamDataMessage, StreamInvocationMessage, StreamItemMessage } from "./IHubProtocol";
 import { ILogger, LogLevel } from "./ILogger";
 import { IStreamResult } from "./Stream";
-import { Arg, Subject } from "./Utils";
+import { Subject } from "./Subject";
+import { Arg } from "./Utils";
 
 const DEFAULT_TIMEOUT_IN_MS: number = 30 * 1000;
 const DEFAULT_PING_INTERVAL_IN_MS: number = 15 * 1000;
@@ -157,13 +158,14 @@ export class HubConnection {
         const streams = this.replaceStreamingParams(args);
         const invocationDescriptor = this.createStreamInvocation(methodName, args);
 
-        const subject = new Subject<T>(() => {
+        const subject = new Subject<T>();
+        subject.cancelCallback = () => {
             const cancelInvocation: CancelInvocationMessage = this.createCancelInvocation(invocationDescriptor.invocationId);
 
             delete this.callbacks[invocationDescriptor.invocationId];
 
             return this.sendWithProtocol(cancelInvocation);
-        });
+        };
 
         this.callbacks[invocationDescriptor.invocationId] = (invocationEvent: CompletionMessage | StreamItemMessage | null, error?: Error) => {
             if (error) {

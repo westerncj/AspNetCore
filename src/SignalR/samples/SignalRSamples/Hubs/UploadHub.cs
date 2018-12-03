@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
@@ -29,7 +29,7 @@ namespace SignalRSamples.Hubs
             // receiving a StreamCompleteMessage should cause this WaitToRead to return false
             while (await source.WaitToReadAsync())
             {
-                while (source.TryRead(out string item))
+                while (source.TryRead(out var item))
                 {
                     Debug.WriteLine($"received: {item}");
                     Console.WriteLine($"received: {item}");
@@ -55,7 +55,7 @@ namespace SignalRSamples.Hubs
 
                 while (await reader.WaitToReadAsync())
                 {
-                    while (reader.TryRead(out int item))
+                    while (reader.TryRead(out var item))
                     {
                         Debug.WriteLine($"got score {item}");
                         score += item;
