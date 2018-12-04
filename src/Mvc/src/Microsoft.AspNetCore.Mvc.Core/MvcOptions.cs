@@ -307,7 +307,7 @@ namespace Microsoft.AspNetCore.Mvc
         /// </para>
         /// </summary>
         /// <value>
-        /// The default value is <c>200</c>.
+        /// The default value is <c>32</c>.
         /// </value>
         public int? MaxValidationDepth
         {
