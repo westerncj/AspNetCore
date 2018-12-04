@@ -8,10 +8,22 @@ namespace Microsoft.AspNetCore.SignalR
 {
     internal static class ReflectionHelper
     {
-        public static bool IsStreamingType(Type type)
+        // mustBeDirectType - Hub methods must use the base 'stream' type and not be a derived class that just implements the 'stream' type
+        // and 'stream' types from the client are allowed to inherit from accepted 'stream' types
+        public static bool IsStreamingType(Type type, bool mustBeDirectType = false)
         {
             // TODO #2594 - add Streams here, to make sending files easy
-            return type != null && type.IsGenericType && type.GetGenericTypeDefinition() == typeof(ChannelReader<>);
+            do
+            {
+                if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(ChannelReader<>))
+                {
+                    return true;
+                }
+
+                type = type.BaseType;
+            } while (mustBeDirectType == false && type != null);
+
+            return false;
         }
     }
 }
