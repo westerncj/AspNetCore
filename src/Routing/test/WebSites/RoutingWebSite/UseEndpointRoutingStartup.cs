@@ -35,7 +35,7 @@ namespace RoutingWebSite
 
         public void Configure(IApplicationBuilder app)
         {
-            app.UseEndpointRouting(routes =>
+            app.UseRouting(routes =>
             {
                 routes.MapHello("/helloworld", "World");
 
@@ -126,7 +126,7 @@ namespace RoutingWebSite
 
         private void SetupBranch(IApplicationBuilder app, string name)
         {
-            app.UseEndpointRouting(routes =>
+            app.UseRouting(routes =>
             {
                 routes.MapGet("api/get/{id}", (context) => context.Response.WriteAsync($"{name} - API Get {context.GetRouteData().Values["id"]}"));
             });

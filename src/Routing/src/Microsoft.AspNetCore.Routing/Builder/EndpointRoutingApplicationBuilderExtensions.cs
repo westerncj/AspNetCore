@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
@@ -14,7 +14,7 @@ namespace Microsoft.AspNetCore.Builder
         // Property key is used by MVC package to check that routing is registered
         private const string EndpointRoutingRegisteredKey = "__EndpointRoutingMiddlewareRegistered";
 
-        public static IApplicationBuilder UseEndpointRouting(this IApplicationBuilder builder, Action<IEndpointRouteBuilder> configure)
+        public static IApplicationBuilder UseRouting(this IApplicationBuilder builder, Action<IEndpointRouteBuilder> configure)
         {
             if (configure == null)
             {
@@ -53,7 +53,7 @@ namespace Microsoft.AspNetCore.Builder
             if (!builder.Properties.TryGetValue(EndpointRoutingRegisteredKey, out _))
             {
                 var message = $"{nameof(EndpointRoutingMiddleware)} must be added to the request execution pipeline before {nameof(EndpointMiddleware)}. " +
-                    $"Please add {nameof(EndpointRoutingMiddleware)} by calling '{nameof(IApplicationBuilder)}.{nameof(UseEndpointRouting)}' inside the call to 'Configure(...)' in the application startup code.";
+                    $"Please add {nameof(EndpointRoutingMiddleware)} by calling '{nameof(IApplicationBuilder)}.{nameof(UseRouting)}' inside the call to 'Configure(...)' in the application startup code.";
 
                 throw new InvalidOperationException(message);
             }
